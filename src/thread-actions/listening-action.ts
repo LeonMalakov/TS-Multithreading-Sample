@@ -1,6 +1,5 @@
 import { delay } from "../common";
-import { IWorkerAction } from "../worker-system/i-worker-action";
-import { IWorkerContext } from "../worker-system/worker-common";
+import { IWorkerContext, IWorkerAction } from "../thread-system/worker-common";
 
 export class ListeningWorkerAction implements IWorkerAction {
 

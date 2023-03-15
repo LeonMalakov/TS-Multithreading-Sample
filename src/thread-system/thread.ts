@@ -2,7 +2,7 @@ import { delay } from "../common";
 import { Worker } from "worker_threads";
 import { WorkerState, WorkerInputMessage, WorkerOutputMessage, WorkerOutputMessageCommand } from "./worker-common";
 
-const workerPath = "./lib/worker-system/worker.js";
+const workerPath = "./lib/thread-system/worker-entry.js";
 
 export class Thread {
     public onMessageReceived?: (thread: Thread, actionId: number, args: any) => void;

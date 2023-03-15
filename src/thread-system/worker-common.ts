@@ -15,6 +15,10 @@ export interface IWorkerContext {
     sendMessage(args : any) : void;
 }
 
+export interface IWorkerAction {
+    perform(context : IWorkerContext, args : any) : Promise<void>;
+}
+
 export class WorkerInputMessage {
     constructor(
         readonly actionId : number,

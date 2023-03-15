@@ -1,6 +1,6 @@
 import { Queue } from "queue-typescript";
-import { Thread } from "./worker-system/thread";
-import { ThreadPool } from "./worker-system/thread-pool";
+import { Thread } from "./thread-system/thread";
+import { ThreadPool } from "./thread-system/thread-pool";
 
 export class ThreadManager {
     private listenThread : Thread;
