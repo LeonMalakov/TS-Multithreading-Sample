@@ -1,54 +1,58 @@
-import { WorkerPool } from "./worker-system/worker-pool";
+import { ThreadPool } from "./worker-system/thread-pool";
 import { delay } from "./common";
 import { Queue } from "queue-typescript";
+import { ThreadManager } from "./thread-manager";
 
-const handlerMap = new Map<number, any>([
-    [0, onNewRequestReceived],
-    [1, (msg : any) => console.info(msg)]
-]);
+const threadManager = new ThreadManager();
+threadManager.run();
 
-let requestsQueue : Queue<any>;
-let workerPool: WorkerPool;
+// const handlerMap = new Map<number, any>([
+//     [0, onNewRequestReceived],
+//     [1, (msg : any) => console.info(msg)]
+// ]);
+
+// let requestsQueue : Queue<any>;
+// let workerPool: ThreadPool;
 
 
-function tryRunProcessRequest(args: any) : boolean {
-    return workerPool.tryRunTask(1, args);
-}
+// function tryRunProcessRequest(args: any) : boolean {
+//     return workerPool.tryRunAction(1, args);
+// }
 
-function onWorkerBecomeIdle() {
-     if(requestsQueue.length > 0) {
-        const item = requestsQueue.dequeue();
-        tryRunProcessRequest(item);
-    }
-}
+// function onWorkerBecomeIdle() {
+//      if(requestsQueue.length > 0) {
+//         const item = requestsQueue.dequeue();
+//         tryRunProcessRequest(item);
+//     }
+// }
 
-function onMessageReceived(actionId: number, args: any) {
-    const handler = handlerMap.get(actionId);
-    if (!handler) {
-        return;
-    }
-    handler(args);
-}
+// function onMessageReceived(actionId: number, args: any) {
+//     const handler = handlerMap.get(actionId);
+//     if (!handler) {
+//         return;
+//     }
+//     handler(args);
+// }
 
-function onNewRequestReceived(args: any) {
-    console.log(`\nRequest Received: ${args}`);
+// function onNewRequestReceived(args: any) {
+//     console.log(`\nRequest Received: ${args}`);
 
-    if (!tryRunProcessRequest(args)) {
-        requestsQueue.enqueue(args);
-    }
-}
+//     if (!tryRunProcessRequest(args)) {
+//         requestsQueue.enqueue(args);
+//     }
+// }
 
-function run() {
-    requestsQueue = new Queue<any>();
-    workerPool = new WorkerPool(4);
-    workerPool.onMessageReceived = onMessageReceived;
-    workerPool.onWorkerBecomeIdle = onWorkerBecomeIdle;
+// function run() {
+//     requestsQueue = new Queue<any>();
+//     workerPool = new ThreadPool(4);
+//     workerPool.onMessageReceived = onMessageReceived;
+//     workerPool.onBecomeIdle = onWorkerBecomeIdle;
 
-    workerPool.tryRunTask(0, null);
-    //workerPool.runTask(WorkerAction.Publish, "qwer");
-    //await delay(7000);
-    //await delay(1000);
-    //workerPool.runTask(WorkerAction.Listening, 6);
-}
+//     workerPool.tryRunAction(0, null);
+//     //workerPool.runTask(WorkerAction.Publish, "qwer");
+//     //await delay(7000);
+//     //await delay(1000);
+//     //workerPool.runTask(WorkerAction.Listening, 6);
+// }
 
-run();
+// run();

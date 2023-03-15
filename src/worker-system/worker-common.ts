@@ -1,9 +1,8 @@
-import { MessagePort } from "worker_threads";
-
 export enum WorkerState {
     Initializing,
     Idle,
-    Processing
+    Processing,
+    Disposed
 }
 
 export enum WorkerOutputMessageCommand {
