@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@types/node": "^18.11.9"
+    "@types/node": "^18.11.9",
+    "queue-typescript": "^1.0.1"
   },
   "devDependencies": {
     "ts-node": "^10.7.0",

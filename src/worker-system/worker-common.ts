@@ -1,7 +1,19 @@
+import { MessagePort } from "worker_threads";
+
 export enum WorkerState {
     Initializing,
     Idle,
     Processing
+}
+
+export enum WorkerOutputMessageCommand {
+    BecomeIdle,
+    UserCommand
+}
+
+export interface IWorkerContext {
+    getThreadId() : number;
+    sendMessage(args : any) : void;
 }
 
 export class WorkerInputMessage {
@@ -13,5 +25,7 @@ export class WorkerInputMessage {
 export class WorkerOutputMessage {
     constructor(
         readonly senderId : number,
-        public state : WorkerState) { }
+        readonly actionId : number,
+        readonly command : WorkerOutputMessageCommand,
+        readonly args : any) { }
 }
