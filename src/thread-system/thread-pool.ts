@@ -1,6 +1,11 @@
 import { WorkerState } from "./worker-common";
 import { Thread } from "./thread";
 
+/**
+ * Пул потоков.
+ * Создает и управляет потоками.
+ * Можно запускать действие на потоках из пула.
+ */
 export class ThreadPool {
     public onMessageReceived?: (actionId: number, args: any) => void;
     public onBecomeIdle?: () => void;
@@ -14,10 +19,19 @@ export class ThreadPool {
         this.maxWorkers = maxWorkers;
     }
 
+    /**
+     * @returns кол-во свободных потоков.
+     */
     public getIdleThreadCount(): number {
         return this.idleThreadCount;
     }
 
+    /**
+     * Запускает действие на потоке из пула.
+     * Если нет свободных потоков и достигнут лимит численности - бросает исключение.
+     * @param actionId идентификатор действия.
+     * @param args аргументы.
+     */
     public runAction(actionId: number, args: any) {
         const thread = this.getIdleThread();
 
@@ -28,6 +42,12 @@ export class ThreadPool {
         this.runThreadAction(thread, actionId, args);
     }
 
+    /**
+     * Пытается запустить действие на потоке из пула.
+     * Если нет свободных потоков и достигнут лимит численности - возвращает False.
+     * @param actionId идентификатор действия.
+     * @param args аргументы.
+     */
     public tryRunAction(actionId: number, args: any): boolean {
         const thread = this.getIdleThread();
 
@@ -41,6 +61,7 @@ export class ThreadPool {
         return true;
     }
 
+    // Запускает действие.
     private async runThreadAction(thread: Thread | null, actionId: number, args: any) {
         if (!thread) {
             thread = await this.createNewThread();
@@ -48,6 +69,7 @@ export class ThreadPool {
         thread.runAction(actionId, args);
     }
 
+    // Возвращает свободный поток.
     private getIdleThread(): Thread | null {
         for (const kvp of this.map) {
             if (kvp[1].getState() == WorkerState.Idle) {
@@ -58,6 +80,7 @@ export class ThreadPool {
         return null;
     }
 
+    // Создает новый поток.
     private async createNewThread(): Promise<Thread> {
         const thread = new Thread();
         thread.onBecomeIdle = this.onThreadBecomeIdle.bind(this);
@@ -69,6 +92,7 @@ export class ThreadPool {
         return thread;
     }
 
+    // Вызывается, когда поток освобождается.
     private onThreadBecomeIdle(thread: Thread) {
         this.idleThreadCount++;
         if (this.onBecomeIdle) {
@@ -76,6 +100,7 @@ export class ThreadPool {
         }
     }
 
+    // Вызывается, когда поток присылает сообщение.
     private onThreadMessageReceived(thread: Thread, actionId: number, args: any) {
         if (this.onMessageReceived) {
             this.onMessageReceived(actionId, args);
